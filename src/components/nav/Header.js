@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Menu } from 'antd';
 import {
+  DashboardOutlined,
   HomeOutlined,
   LoginOutlined,
   LogoutOutlined,
@@ -69,6 +70,16 @@ const Header = () => {
           title={user.email && user.email.split('@')[0]}
           className="float-right"
         >
+          {user && user.role === 'subscriber' && (
+            <Item icon={<DashboardOutlined />}>
+              <Link to="/user/history">Dashboard</Link>
+            </Item>
+          )}
+          {user && user.role === 'admin' && (
+            <Item icon={<DashboardOutlined />}>
+              <Link to="/admin/dashboard">Dashboard</Link>
+            </Item>
+          )}
           <Item icon={<LogoutOutlined />} onClick={logout} key="logout">
             Logout
           </Item>

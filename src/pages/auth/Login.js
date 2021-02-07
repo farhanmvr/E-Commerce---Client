@@ -7,40 +7,37 @@ import LoadingBar from 'react-top-loading-bar';
 import { Link } from 'react-router-dom';
 
 import { auth, googleAuthProvider } from '../../firebase';
+import { createOrUpdateUser } from '../../functions/auth';
 
 const Login = ({ history }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('farhanxavio@gmail.com');
+  const [password, setPassword] = useState('123456789');
   const ref = useRef(null);
 
   const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state);
+  const { user } = useSelector((state) => ({ ...state }));
 
   useEffect(() => {
     if (user && user.token) history.push('/');
-  }, [user]);
+  }, [history, user]);
+
+  const roleBasedRedirect = (res) => {
+    if (res.data.user.role === 'admin') history.push('/admin/dashboard');
+    else history.push('/user/history');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     ref.current.continuousStart(60);
     try {
       const result = await auth.signInWithEmailAndPassword(email, password);
-      message.success("You're Logged In Successfully");
-      const { user } = result;
-      const idTokenResult = await await user.getIdTokenResult();
-      dispatch({
-        type: 'LOGGED_IN_USER',
-        payload: {
-          email: user.email,
-          token: idTokenResult.token,
-        },
-      });
       ref.current.complete();
-      history.push('/');
+      const firebaseUser = result.user;
+      completeAuth(firebaseUser);
     } catch (err) {
-      toast.error(err.message);
       ref.current.complete();
+      toast.error(err.message);
     }
   };
 
@@ -48,21 +45,35 @@ const Login = ({ history }) => {
     e.preventDefault();
     try {
       const result = await auth.signInWithPopup(googleAuthProvider);
+      ref.current.complete();
       ref.current.continuousStart(60);
-      const { user } = result;
-      const idTokenResult = await await user.getIdTokenResult();
+      const firebaseUser = result.user;
+      completeAuth(firebaseUser);
+    } catch (err) {
+      ref.current.complete();
+    }
+  };
+
+  const completeAuth = async (firebaseUser) => {
+    try {
+      const idTokenResult = await firebaseUser.getIdTokenResult();
+      const response = await createOrUpdateUser(idTokenResult.token);
       message.success("You're Logged In Successfully");
       dispatch({
         type: 'LOGGED_IN_USER',
         payload: {
-          email: user.email,
+          name: response.data.user.name,
+          picture: response.data.user.picture,
+          email: response.data.user.email,
           token: idTokenResult.token,
+          role: response.data.user.role,
+          _id: response.data.user._id,
         },
       });
-      ref.current.complete();
-      history.push('/');
+      roleBasedRedirect(response);
     } catch (err) {
       ref.current.complete();
+      toast.error(err.message);
     }
   };
 
