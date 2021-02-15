@@ -1,11 +1,14 @@
 import React from 'react';
-import { Button } from 'antd';
+import { Button, Rate } from 'antd';
 import { HeartOutlined, ShoppingOutlined } from '@ant-design/icons';
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
+import RatingModal from '../modal/RatingModal';
+import { showAverage } from '../../functions/rating';
 
-const SingleProduct = ({ product }) => {
+const SingleProduct = ({ product, onStarClicked, rating, setRating }) => {
   const { title, description, price, images } = product;
+
   return (
     <>
       <div className="col-md-5 offset-md-1">
@@ -17,10 +20,14 @@ const SingleProduct = ({ product }) => {
         </Carousel>
       </div>
       <div className="col-md-5">
-        <h4>
+        <h4 className="mb-0">
           <strong>{title}</strong>
         </h4>
-        <p>No rating yet</p>
+        {product && product.ratings && product.ratings.length > 0 ? (
+          showAverage(product)
+        ) : (
+          <p>No rating yet</p>
+        )}
         <hr />
         <h5 className="font-weight-bold mb-0">{`Rs.${price}`}</h5>
         <p className="text-success">inclusive of all taxes</p>
@@ -50,6 +57,18 @@ const SingleProduct = ({ product }) => {
         <hr className="mt-4" />
         <p>PRODUCT DETAILS</p>
         <p style={{ textAlign: 'justify' }}>{description}</p>
+        <RatingModal
+          rating={rating}
+          id={product._id}
+          onStarClicked={onStarClicked}
+        >
+          <Rate
+            onChange={(val) => setRating(val)}
+            style={{ color: 'green' }}
+            value={rating}
+            allowHalf
+          />
+        </RatingModal>
       </div>
     </>
   );
