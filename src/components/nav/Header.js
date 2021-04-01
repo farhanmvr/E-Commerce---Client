@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import { Menu } from 'antd';
+import { Badge, Menu } from 'antd';
 import {
   DashboardOutlined,
   HomeOutlined,
   LoginOutlined,
   LogoutOutlined,
+  ShoppingCartOutlined,
   ShoppingOutlined,
   UserAddOutlined,
-  UserOutlined,
 } from '@ant-design/icons';
 import { Link, useHistory } from 'react-router-dom';
 import firebase from 'firebase';
 import { useDispatch, useSelector } from 'react-redux';
 import Search from '../forms/Search';
+import Avatar from 'antd/lib/avatar/avatar';
 
 const { SubMenu, Item } = Menu;
 
@@ -20,7 +21,7 @@ const Header = () => {
   const [current, setCurrent] = useState('home');
   const dispatch = useDispatch();
   const history = useHistory();
-  const { user } = useSelector((state) => state);
+  const { user, cart } = useSelector((state) => state);
 
   const handleClick = (e) => {
     setCurrent(e.key);
@@ -45,6 +46,17 @@ const Header = () => {
       </Item>
       <Item style={itemStyle} key="shop" icon={<ShoppingOutlined />}>
         <Link to="/shop">Shop</Link>
+      </Item>
+      <Item
+        style={itemStyle}
+        key="cart"
+        icon={
+          <Badge count={cart.length}>
+            <ShoppingCartOutlined />
+          </Badge>
+        }
+      >
+        <Link to="/cart">Cart</Link>
       </Item>
       {!user && (
         <Item
@@ -71,7 +83,13 @@ const Header = () => {
         <SubMenu
           style={itemStyle}
           key="username"
-          icon={<UserOutlined />}
+          icon={
+            user.picture ? (
+              <Avatar size={25} className="mr-2" src={user.picture} />
+            ) : (
+              <UserAddOutlined />
+            )
+          }
           title={user.email && user.email.split('@')[0]}
           className="float-right"
         >

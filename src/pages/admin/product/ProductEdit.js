@@ -40,7 +40,7 @@ const ProductEdit = ({ visible, setVisible, slug }) => {
         });
       })
       .catch((err) => setVisible(false));
-  }, [categories, product, setVisible, slug]);
+  }, []);
 
   const submitHandler = (product) => {
     const category = product.category._id;

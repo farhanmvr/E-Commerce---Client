@@ -1,13 +1,42 @@
 import React from 'react';
+import _ from 'lodash';
 import { Button, Rate } from 'antd';
 import { HeartOutlined, ShoppingOutlined } from '@ant-design/icons';
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
 import RatingModal from '../modal/RatingModal';
 import { showAverage } from '../../functions/rating';
+import { useSelector, useDispatch } from 'react-redux';
 
 const SingleProduct = ({ product, onStarClicked, rating, setRating }) => {
   const { title, description, price, images } = product;
+  const { user, cart } = useSelector((state) => ({ ...state }));
+  const dispatch = useDispatch();
+
+  const handleAddCart = () => {
+    // create cart array
+    let cart = [];
+    if (typeof window !== 'undefined') {
+      // if cart is in loacalstorage GET it
+      if (localStorage.getItem('cart')) {
+        cart = JSON.parse(localStorage.getItem('cart'));
+      }
+      // push new product to cart
+      cart.push({
+        ...product,
+        count: 1,
+      });
+      // remove duplicate
+      let unique = _.uniqWith(cart, _.isEqual);
+      // save to local storage
+      localStorage.setItem('cart', JSON.stringify(unique));
+      // add to redux state
+      dispatch({
+        type: 'ADD_TO_CART',
+        payload: unique,
+      });
+    }
+  };
 
   return (
     <>
@@ -40,6 +69,7 @@ const SingleProduct = ({ product, onStarClicked, rating, setRating }) => {
         <p className="mb-1">Color: {product.color}</p>
         <br />
         <Button
+          onClick={handleAddCart}
           icon={<ShoppingOutlined />}
           style={{ width: '40%', backgroundColor: '#44484d', color: 'white' }}
           size="large"

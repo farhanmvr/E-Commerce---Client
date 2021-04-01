@@ -27,3 +27,7 @@ code {
   height: 450px;
   object-fit: cover;
 }
+
+.cart-table td {
+  vertical-align: middle;
+}
