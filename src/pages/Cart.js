@@ -3,8 +3,9 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import ProductCardInCheckout from '../components/cards/ProductCardInCheckout';
+import { userCart } from '../functions/user';
 
-const Cart = () => {
+const Cart = ({ history }) => {
   const { cart, user } = useSelector((state) => ({ ...state }));
   let total = 0;
 
@@ -27,6 +28,14 @@ const Cart = () => {
       ))}
     </table>
   );
+
+  const saveDataToDb = () => {
+    userCart(cart, user.token)
+      .then((res) => {
+        if (res.data.status === 'success') history.push('/checkout');
+      })
+      .catch((err) => console.log('cart save error'));
+  };
 
   return (
     <div className="container-fluid pt-3">
@@ -86,12 +95,10 @@ const Cart = () => {
                 </Button>
               </Link>
             ) : (
-              <Link
-                className="d-flex justify-content-stretch col-12"
-                to="/login"
-              >
+              <div className="col-12 d-flex justify-content-stretch">
                 <Button
-                  className="btn-block btn btn-dark"
+                  onClick={saveDataToDb}
+                  className="btn btn-dark btn-block"
                   style={{
                     backgroundColor: '#212529',
                     color: 'white',
@@ -102,7 +109,7 @@ const Cart = () => {
                 >
                   CONTINUE TO CHECKOUT
                 </Button>
-              </Link>
+              </div>
             )}
           </div>
         </div>
