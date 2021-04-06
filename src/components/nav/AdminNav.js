@@ -26,7 +26,7 @@ const AdminNav = (props) => {
         <Link to="/admin/sub">Sub Category</Link>
       </Menu.Item>
       <Menu.Item key="coupons">
-        <Link to="/admin/coupons">Coupons</Link>
+        <Link to="/admin/coupon">Coupons</Link>
       </Menu.Item>
       <Menu.Item key="password">
         <Link to="/admin/password">Password</Link>
