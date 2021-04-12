@@ -1,16 +1,17 @@
 import React from 'react';
 import _ from 'lodash';
-import { Button, Rate } from 'antd';
+import { Button, message, Rate } from 'antd';
 import { HeartOutlined, ShoppingOutlined } from '@ant-design/icons';
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
 import RatingModal from '../modal/RatingModal';
 import { showAverage } from '../../functions/rating';
 import { useSelector, useDispatch } from 'react-redux';
+import { addToWishList } from '../../functions/user';
 
 const SingleProduct = ({ product, onStarClicked, rating, setRating }) => {
   const { title, description, price, images } = product;
-  const { user, cart } = useSelector((state) => ({ ...state }));
+  const { user } = useSelector((state) => ({ ...state }));
   const dispatch = useDispatch();
 
   const handleAddCart = () => {
@@ -83,6 +84,11 @@ const SingleProduct = ({ product, onStarClicked, rating, setRating }) => {
           </Button>
         )}
         <Button
+          onClick={() =>
+            addToWishList(user.token, product._id).then((res) =>
+              message.success('Added to wishlist')
+            )
+          }
           icon={<HeartOutlined />}
           className="ml-2"
           style={{ width: '30%' }}

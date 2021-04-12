@@ -26,8 +26,8 @@ const Orders = ({ updateStatus, orders }) => {
       <Option value="Not Processed">Not Processed</Option>
       <Option value="Processing">Processing</Option>
       <Option value="Dispatched">Dispatched</Option>
-      <Option value="Dispatched">Cancelled</Option>
-      <Option value="Dispatched">Completed</Option>
+      <Option value="Cancelled">Cancelled</Option>
+      <Option value="Completed">Completed</Option>
     </Select>
   );
 
