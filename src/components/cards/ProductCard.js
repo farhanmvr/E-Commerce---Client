@@ -59,14 +59,19 @@ const ProductCard = ({ product }) => {
       <h6 className="mt-3">
         <strong>{`₹${product.price}`}</strong>
       </h6>
-      <Button
-        onClick={handleAddCart}
-        icon={<ShoppingCartOutlined />}
-        className="px-4"
-        style={{ backgroundColor: '#44484d', color: 'white' }}
-      >
-        Add to Cart
-      </Button>
+      {product.quantity < 1 ? (
+        <p className='text-danger'>Out of stock</p>
+      ) : (
+        <Button
+          onClick={handleAddCart}
+          disabled={product.quantity < 1}
+          icon={<ShoppingCartOutlined />}
+          className="px-4"
+          style={{ backgroundColor: '#44484d', color: 'white' }}
+        >
+          Add to Cart
+        </Button>
+      )}
     </Card>
   );
 };

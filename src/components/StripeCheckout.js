@@ -3,6 +3,7 @@ import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useSelector, useDispatch } from 'react-redux';
 import { createPaymentIntent } from '../functions/stripe';
 import { Link } from 'react-router-dom';
+import { createOrder } from '../functions/user';
 
 const StripeCheckout = ({ history }) => {
   const dispatch = useDispatch();
@@ -40,10 +41,22 @@ const StripeCheckout = ({ history }) => {
     if (payload.error) {
       setError(`Payment failed ${payload.error.message}`);
     } else {
-      console.log(JSON.stringify(payload, null, 4));
-      setError(null);
-      setProcessing(false);
-      setSucceeded(true);
+      createOrder(user.token, payload).then((res) => {
+        if (res.data.status === 'success') {
+          if (typeof window !== 'undefined') localStorage.removeItem('cart');
+          dispatch({
+            type: 'ADD_TO_CART',
+            payload: [],
+          });
+          dispatch({
+            type: 'COUPON_APPLIED',
+            payload: false,
+          });
+          setError('');
+          setProcessing(false);
+          setSucceeded(true);
+        }
+      });
     }
   };
 

@@ -60,22 +60,28 @@ const SingleProduct = ({ product, onStarClicked, rating, setRating }) => {
         <hr />
         <h5 className="font-weight-bold mb-0">{`Rs.${price}`}</h5>
         <p className="text-success">inclusive of all taxes</p>
-        <p>
-          <strong>{product.quantity} </strong>more available
-        </p>
+        {product.quantity < 1 ? (
+          <p className="text-danger">Out of stock</p>
+        ) : (
+          <p>
+            <strong>{product.quantity} </strong>more available
+          </p>
+        )}
         <p className="mb-1">
           Shipping: <strong>{product.shipping}</strong>
         </p>
         <p className="mb-1">Color: {product.color}</p>
         <br />
-        <Button
-          onClick={handleAddCart}
-          icon={<ShoppingOutlined />}
-          style={{ width: '40%', backgroundColor: '#44484d', color: 'white' }}
-          size="large"
-        >
-          Add to Cart
-        </Button>
+        {product.quantity > 1 && (
+          <Button
+            onClick={handleAddCart}
+            icon={<ShoppingOutlined />}
+            style={{ width: '40%', backgroundColor: '#44484d', color: 'white' }}
+            size="large"
+          >
+            Add to Cart
+          </Button>
+        )}
         <Button
           icon={<HeartOutlined />}
           className="ml-2"
